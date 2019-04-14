@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jenkins-slave-1
+  namespace: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins-slave-1
+  serviceName: "jenkins-slave-1"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins-slave-1
+    spec:
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: jenkins-sa
+      containers:
+      - name: jenkins-slave
+        image: jenkinsci/jnlp-slave:3.27-1
+        env:
+          - name: JENKINS_URL
+            value: http://jenkins.jenkins.svc.k8s.credit.cluster:8080
+          - name: JENKINS_AGENT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: JENKINS_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: jenkins-slave-config
+                key: jenkins-slave-1
+          - name: JENKINS_AGENT_WORKDIR
+            value: /var/jenkins_home
+        ports:
+          - name: http-port
+            containerPort: 8080
+          - name: jnlp-port
+            containerPort: 50000
+        volumeMounts:
+          - name: docker
+            mountPath: /usr/bin/docker
+          - name: docker-sock
+            mountPath: /var/run/docker.sock
+          - name: jenkins-home
+            mountPath: /var/jenkins_home
+          - name: docker-lib
+            mountPath: /usr/lib/x86_64-linux-gnu/libltdl.so.7
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-slave-pvc1
+        - name: docker
+          hostPath:
+            path: /usr/bin/docker
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+        - name: docker-lib
+          hostPath:
+            path: /usr/lib/x86_64-linux-gnu/libltdl.so.7
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jenkins-slave-2
+  namespace: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins-slave-2
+  serviceName: "jenkins-slave-2"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins-slave-2
+    spec:
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: jenkins-sa
+      containers:
+      - name: jenkins-slave
+        image: jenkinsci/jnlp-slave:3.27-1
+        env:
+          - name: JENKINS_URL
+            value: http://jenkins.jenkins.svc.k8s.credit.cluster:8080
+          - name: JENKINS_AGENT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: JENKINS_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: jenkins-slave-config
+                key: jenkins-slave-2
+          - name: JENKINS_AGENT_WORKDIR
+            value: /var/jenkins_home
+        ports:
+          - name: http-port
+            containerPort: 8080
+          - name: jnlp-port
+            containerPort: 50000
+        volumeMounts:
+          - name: docker
+            mountPath: /usr/bin/docker
+          - name: docker-sock
+            mountPath: /var/run/docker.sock
+          - name: jenkins-home
+            mountPath: /var/jenkins_home
+          - name: docker-lib
+            mountPath: /usr/lib/x86_64-linux-gnu/libltdl.so.7
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-slave-pvc2
+        - name: docker
+          hostPath:
+            path: /usr/bin/docker
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+        - name: docker-lib
+          hostPath:
+            path: /usr/lib/x86_64-linux-gnu/libltdl.so.7

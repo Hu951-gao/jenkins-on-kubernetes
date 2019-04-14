@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-slave-config
+  namespace: jenkins
+data:
+  jenkins-slave-1: b680c71287a4ed170329a890755842041652c3ec6e87483f6363e3903d58e8b4
+  jenkins-slave-2: 3d0f8db24fa4e21def1d40e4f9b0161d716bbc55d866367e39ad3edfc21fda21
