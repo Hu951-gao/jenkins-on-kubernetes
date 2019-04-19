@@ -34,6 +34,8 @@ spec:
               mountPath: /usr/lib/x86_64-linux-gnu/libltdl.so.7
             - name: jenkins-home
               mountPath: /var/jenkins_home
+            - name: resolve
+              mountPath: /etc/resolv.conf
       volumes:
         - name: jenkins-home
           persistentVolumeClaim:
@@ -47,3 +49,6 @@ spec:
         - name: docker-lib
           hostPath:
             path: /usr/lib/x86_64-linux-gnu/libltdl.so.7
+        - name: resolve
+          hostPath:
+            path: /etc/resolv.conf

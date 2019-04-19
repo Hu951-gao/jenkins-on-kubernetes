@@ -18,7 +18,8 @@ spec:
       serviceAccountName: jenkins-sa
       containers:
       - name: jenkins-slave
-        image: jenkinsci/jnlp-slave:3.27-1
+        image: cloudbees/jnlp-slave-with-java-build-tools
+        args: ["b680c71287a4ed170329a890755842041652c3ec6e87483f6363e3903d58e8b4","jenkins-slave-1-0"]
         env:
           - name: JENKINS_URL
             value: http://jenkins.jenkins.svc.k8s.credit.cluster:8080
@@ -60,7 +61,6 @@ spec:
         - name: docker-lib
           hostPath:
             path: /usr/lib/x86_64-linux-gnu/libltdl.so.7
-
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -80,9 +80,17 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: jenkins-sa
+      hostAliases:
+      - ip: "10.65.236.72"
+        hostnames:
+        - "git.garena.com"
+      - ip: "122.11.194.243"
+        hostnames:
+        - "harbor.shopeemobile.com"
       containers:
       - name: jenkins-slave
-        image: jenkinsci/jnlp-slave:3.27-1
+        image: cloudbees/jnlp-slave-with-java-build-tools
+        args: ["3d0f8db24fa4e21def1d40e4f9b0161d716bbc55d866367e39ad3edfc21fda21","jenkins-slave-2-0"]
         env:
           - name: JENKINS_URL
             value: http://jenkins.jenkins.svc.k8s.credit.cluster:8080
